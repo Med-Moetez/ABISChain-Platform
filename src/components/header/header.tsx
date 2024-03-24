@@ -1,6 +1,7 @@
 import { UserButton, auth } from "@clerk/nextjs";
 import { Package2Icon } from "lucide-react";
 import Link from "next/link";
+import { ActiveLink } from "../ui/activeLink";
 
 export default async function Header() {
   const { userId } = auth();
@@ -17,15 +18,9 @@ export default async function Header() {
       <div className="flex items-center gap-2 font-semibold md:gap-3">
         {userId ? (
           <div className="flex gap-4 items-center">
-            <Link
-              className="text-gray-500 dark:text-gray-400"
-              href="/dashboard"
-            >
-              Dashboard
-            </Link>
-            <Link className="text-gray-900" href="/products">
-              Products
-            </Link>
+            <ActiveLink name="Dashboard" path="/dashboard" />
+            <ActiveLink name="Products" path="/products" />
+
             <UserButton afterSignOutUrl="/" />
           </div>
         ) : (
