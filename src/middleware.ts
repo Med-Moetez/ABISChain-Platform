@@ -1,4 +1,5 @@
 import { authMiddleware } from "@clerk/nextjs";
+import { NextResponse } from "next/server";
 
 // See https://clerk.com/docs/references/nextjs/auth-middleware
 // for more information about configuring your Middleware
@@ -9,6 +10,13 @@ export default authMiddleware({
   // Prevent the specified routes from accessing
   // authentication information:
   // ignoredRoutes: ['/no-auth-in-this-route'],
+
+  afterAuth(auth, req, evt) {
+    if (auth.userId && req.nextUrl.pathname === "/") {
+      const orgSelection = new URL("/dashboard", req.url);
+      return NextResponse.redirect(orgSelection);
+    }
+  },
 });
 
 export const config = {

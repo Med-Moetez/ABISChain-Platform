@@ -9,7 +9,7 @@ export default async function Header() {
     <div className="flex  justify-between h-14 gap-4 border-b px-4 md:h-16 lg:gap-6 dark:border-gray-700 shrink-0">
       <Link
         className="flex items-center gap-2 text-lg font-semibold md:gap-3"
-        href="/"
+        href={userId ? "/dashboard" : "/"}
       >
         <Package2Icon className="w-4 h-4" />
         <span className="">ABISChain</span>
