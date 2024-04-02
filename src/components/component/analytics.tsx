@@ -19,76 +19,109 @@ import { ResponsiveBar } from "@nivo/bar";
 import { ResponsiveScatterPlot } from "@nivo/scatterplot";
 import { ResponsiveLine } from "@nivo/line";
 import { ResponsivePie } from "@nivo/pie";
+import { ResponsiveWaffle } from "@nivo/waffle";
+import { useBlockchainStats } from "@/hooks/blockchainHooks";
 
 export function Analytics() {
+  const { data: blockchainStats } = useBlockchainStats();
+  let totalSum =
+    blockchainStats?.dataType?.financeValue +
+    blockchainStats?.dataType?.healthValue +
+    blockchainStats?.dataType?.itValue;
+
+  // Calculate percentages
+  let financePercentage =
+    (blockchainStats?.dataType?.financeValue / totalSum) * 100;
+  let healthPercentage =
+    (blockchainStats?.dataType?.healthValue / totalSum) * 100;
+  let itPercentage = (blockchainStats?.dataType?.itValue / totalSum) * 100;
+
+  const datatype = { financePercentage, healthPercentage, itPercentage };
+
+  const typesstats = blockchainStats?.typesStats;
+
+  const minedtransactionscount = blockchainStats?.blockchainTransactionsCount;
+  const pendingtransactionscount = blockchainStats?.pendingTransactionsCount;
   return (
     <div className="flex flex-col min-h-screen">
       <main className="grid min-h-[calc(100vh_-_theme(spacing.14))] gap-4 p-4 md:gap-8 md:p-6">
         <div className="grid md:grid-cols-3 gap-6">
           <Card className="flex flex-col">
             <CardHeader>
-              <CardDescription>Total Sales</CardDescription>
-              <CardTitle>$2389.00</CardTitle>
+              <CardDescription>Mined blocks</CardDescription>
+              <CardTitle>Blockchain Blocks</CardTitle>
             </CardHeader>
             <CardContent>
-              <StackedbarChart className="aspect-[4/3]" />
+              <p className="text-8xl self-center">
+                {blockchainStats?.blocksCount || 0}
+              </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
-              <CardDescription>Sessions</CardDescription>
-              <CardTitle>345</CardTitle>
+              <CardDescription>Transactions</CardDescription>
+              <CardTitle>Mined / pending transactions</CardTitle>
             </CardHeader>
             <CardContent>
-              <DotChart className="aspect-[4/3]" />
+              <MyResponsiveWaffle
+                minedtransactionscount={minedtransactionscount}
+                pendingtransactionscount={pendingtransactionscount}
+                className="aspect-[4/3]"
+              />
             </CardContent>
           </Card>
           <Card className="flex flex-col">
             <CardHeader>
-              <CardDescription>Returning Customers</CardDescription>
-              <CardTitle>33.5%</CardTitle>
+              <CardDescription>Agents types</CardDescription>
+              <CardTitle>Agents types</CardTitle>
             </CardHeader>
             <CardContent>
-              <GroupedbarChart className="aspect-[4/3]" />
+              <LabelledpiNodeseChart
+                typesstats={typesstats}
+                className="aspect-[4/3]"
+              />
             </CardContent>
           </Card>
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           <Card className="flex flex-col">
             <CardHeader>
-              <CardDescription>Visitors</CardDescription>
-              <CardTitle>3,456</CardTitle>
+              <CardDescription>Block Transactions</CardDescription>
+              <CardTitle>Number of transactions</CardTitle>
             </CardHeader>
             <CardContent>
-              <LineChart className="aspect-[4/3]" />
+              <LineChart
+                txnlengths={blockchainStats?.txnLengths}
+                className="aspect-[4/3]"
+              />
             </CardContent>
           </Card>
           <Card className="flex flex-col">
             <CardHeader>
-              <CardDescription>Page Views</CardDescription>
-              <CardTitle>12,345</CardTitle>
+              <CardDescription>Blockchain Data types</CardDescription>
+              <CardTitle>Data types</CardTitle>
             </CardHeader>
             <CardContent>
-              <LabelledpieChart className="aspect-[4/3]" />
+              <LabelledpieChart datatype={datatype} className="aspect-[4/3]" />
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
-              <CardDescription>Visitors</CardDescription>
-              <CardTitle>Top Referrers</CardTitle>
+              <CardDescription>Pruning Info</CardDescription>
+              <CardTitle>Last Block details</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="flex items-center">
-                <div>google.com</div>
-                <div className="font-semibold ml-auto">3K</div>
+                <div>Pruner</div>
+                <div className="font-semibold ml-auto">
+                  {blockchainStats?.prunerId || "Not yet"}
+                </div>
               </div>
               <div className="flex items-center">
-                <div>twitter.com</div>
-                <div className="font-semibold ml-auto">1.2K</div>
-              </div>
-              <div className="flex items-center">
-                <div>youtube.com</div>
-                <div className="font-semibold ml-auto">1.1K</div>
+                <div>lastTime Pruned</div>
+                <div className="font-semibold ml-auto">
+                  {blockchainStats?.lastTimePruned || "Not yet"}
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -339,32 +372,28 @@ function GroupedbarChart(props: any) {
 }
 
 function LineChart(props: any) {
+  const chartData = props?.txnlengths?.map((item: any, index: any) => {
+    return { x: index, y: item };
+  });
   return (
     <div {...props}>
       <ResponsiveLine
         data={[
           {
             id: "Desktop",
-            data: [
-              { x: "Jan", y: 43 },
-              { x: "Feb", y: 137 },
-              { x: "Mar", y: 61 },
-              { x: "Apr", y: 145 },
-              { x: "May", y: 26 },
-              { x: "Jun", y: 154 },
-            ],
+            data: chartData || [],
           },
-          {
-            id: "Mobile",
-            data: [
-              { x: "Jan", y: 60 },
-              { x: "Feb", y: 48 },
-              { x: "Mar", y: 177 },
-              { x: "Apr", y: 78 },
-              { x: "May", y: 96 },
-              { x: "Jun", y: 204 },
-            ],
-          },
+          // {
+          //   id: "Mobile",
+          //   data: [
+          //     { x: "Jan", y: 60 },
+          //     { x: "Feb", y: 48 },
+          //     { x: "Mar", y: 177 },
+          //     { x: "Apr", y: 78 },
+          //     { x: "May", y: 96 },
+          //     { x: "Jun", y: 204 },
+          //   ],
+          // },
         ]}
         margin={{ top: 10, right: 10, bottom: 40, left: 40 }}
         xScale={{
@@ -379,11 +408,7 @@ function LineChart(props: any) {
           tickSize: 0,
           tickPadding: 16,
         }}
-        axisLeft={{
-          tickSize: 0,
-          tickValues: 5,
-          tickPadding: 16,
-        }}
+        axisLeft={{ tickSize: 0, tickValues: 5, tickPadding: 16 }}
         colors={["#2563eb", "#e11d48"]}
         pointSize={6}
         useMesh={true}
@@ -412,16 +437,23 @@ function LineChart(props: any) {
 }
 
 function LabelledpieChart(props: any) {
+  const { datatype } = props;
   return (
     <div {...props}>
       <ResponsivePie
         data={[
-          { id: "Jan", value: 111 },
-          { id: "Feb", value: 157 },
-          { id: "Mar", value: 129 },
-          { id: "Apr", value: 150 },
-          { id: "May", value: 119 },
-          { id: "Jun", value: 72 },
+          {
+            id: "Health",
+            value: datatype?.healthPercentage || 0,
+          },
+          {
+            id: "Finance",
+            value: datatype?.financePercentage || 0,
+          },
+          {
+            id: "IT",
+            value: datatype?.itPercentage || 0,
+          },
         ]}
         sortByValue
         margin={{ top: 30, right: 50, bottom: 30, left: 50 }}
@@ -432,7 +464,7 @@ function LabelledpieChart(props: any) {
         borderWidth={1}
         arcLinkLabelsThickness={1}
         enableArcLabels={false}
-        colors={["#2563eb"]}
+        colors={["#e11d48", "#2563eb", "#545454"]}
         theme={{
           tooltip: {
             chip: {
@@ -446,6 +478,111 @@ function LabelledpieChart(props: any) {
           },
         }}
         role="application"
+      />
+    </div>
+  );
+}
+
+function LabelledpiNodeseChart(props: any) {
+  const { typesstats } = props;
+  return (
+    <div {...props}>
+      <ResponsivePie
+        data={[
+          {
+            id: "FullNode",
+            value: typesstats?.fullNodeCount,
+          },
+          {
+            id: "LightNode",
+            value: typesstats?.lightNodeCount,
+          },
+        ]}
+        sortByValue
+        margin={{ top: 30, right: 50, bottom: 30, left: 50 }}
+        innerRadius={0.5}
+        padAngle={1}
+        cornerRadius={3}
+        activeOuterRadiusOffset={2}
+        borderWidth={1}
+        arcLinkLabelsThickness={1}
+        enableArcLabels={false}
+        colors={["#e11d48", "#2563eb"]}
+        theme={{
+          tooltip: {
+            chip: {
+              borderRadius: "9999px",
+            },
+            container: {
+              fontSize: "12px",
+              textTransform: "capitalize",
+              borderRadius: "6px",
+            },
+          },
+        }}
+        role="application"
+      />
+    </div>
+  );
+}
+
+function MyResponsiveWaffle(props: any) {
+  const total =
+    props?.pendingtransactionscount + props?.minedtransactionscount || 0;
+  const data = [
+    {
+      id: "Mined",
+      label: "Mined",
+      value: props?.minedtransactionscount || 0,
+    },
+    {
+      id: "Pending",
+      label: "Pending",
+      value: props?.pendingtransactionscount || 0,
+    },
+  ];
+  return (
+    <div {...props}>
+      <ResponsiveWaffle
+        data={data}
+        total={total}
+        rows={18}
+        columns={14}
+        padding={1}
+        valueFormat=".2f"
+        margin={{ top: 10, right: 10, bottom: 10, left: 120 }}
+        colors={{ scheme: "nivo" }}
+        borderRadius={3}
+        borderColor={{
+          from: "color",
+          modifiers: [["darker", 0.3]],
+        }}
+        motionStagger={2}
+        legends={[
+          {
+            anchor: "top-left",
+            direction: "column",
+            justify: false,
+            translateX: -100,
+            translateY: 0,
+            itemsSpacing: 4,
+            itemWidth: 100,
+            itemHeight: 20,
+            itemDirection: "left-to-right",
+            itemOpacity: 1,
+            itemTextColor: "#777",
+            symbolSize: 20,
+            effects: [
+              {
+                on: "hover",
+                style: {
+                  itemTextColor: "#000",
+                  itemBackground: "#f7fafb",
+                },
+              },
+            ],
+          },
+        ]}
       />
     </div>
   );

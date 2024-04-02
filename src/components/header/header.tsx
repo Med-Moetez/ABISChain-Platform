@@ -20,6 +20,8 @@ export default async function Header() {
           <div className="flex gap-4 items-center">
             <ActiveLink name="Dashboard" path="/dashboard" />
             <ActiveLink name="Products" path="/products" />
+            <ActiveLink name="Block Explorer" path="/blockExplorer" />
+            <ActiveLink name="Blockchain" path="/blockchain" />
 
             <UserButton afterSignOutUrl="/" />
           </div>
