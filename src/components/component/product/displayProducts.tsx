@@ -13,6 +13,7 @@ import {
   TableBody,
   Table,
 } from "@/components/ui/table";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function DisplayProducts(props: any) {
   return (
@@ -26,6 +27,7 @@ export function DisplayProducts(props: any) {
           <TableHeader>
             <TableRow>
               <TableHead>ID</TableHead>
+              <TableHead>User</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Quantity</TableHead>
               <TableHead>Price</TableHead>
@@ -36,6 +38,13 @@ export function DisplayProducts(props: any) {
             {props.products?.map((item: any) => (
               <TableRow key={item?.id}>
                 <TableCell>{item?.id}</TableCell>
+                <TableCell>
+                  <Avatar>
+                    <AvatarImage src={item?.user?.imageUrl} />
+                    <AvatarFallback>{item?.user?.fullName}</AvatarFallback>
+                  </Avatar>
+                </TableCell>
+
                 <TableCell>{item?.name}</TableCell>
                 <TableCell>{item?.quantity}</TableCell>
                 <TableCell>${item?.price}</TableCell>

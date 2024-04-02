@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/card";
 import { useCreateProduct } from "@/hooks/productHooks";
 import { v4 as uuidv4 } from "uuid";
+import { useUser } from "@clerk/nextjs";
 
 const formSchema = z.object({
   name: z.string().min(3),
@@ -37,6 +38,7 @@ const formSchema = z.object({
 });
 
 export default function AddProduct() {
+  const { user } = useUser();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -53,6 +55,7 @@ export default function AddProduct() {
     addMutate({
       id: await uuidv4(),
       ...values,
+      user: user,
     });
     form.reset();
   };
