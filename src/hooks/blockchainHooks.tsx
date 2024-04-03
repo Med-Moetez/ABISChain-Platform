@@ -16,10 +16,16 @@ const useBlockchain = () => {
   return useQuery(["blockchain"], () => blockchainService.getBlockchain());
 };
 
+const usePrunedBlockchain = () => {
+  return useQuery(["prunedBlockchain"], () =>
+    blockchainService.getPrunedBlockchain()
+  );
+};
+
 const useBlockchainStats = () => {
   return useQuery(["blockchainStats"], () =>
     blockchainService.getBlockchainStats()
   );
 };
 
-export { useBlockchain, useBlockById, useBlockchainStats };
+export { useBlockchain, usePrunedBlockchain, useBlockById, useBlockchainStats };

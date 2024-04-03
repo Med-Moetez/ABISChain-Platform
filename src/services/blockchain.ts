@@ -22,6 +22,15 @@ class BlockchainService {
   }
 
   /**
+   * Get pruned blockchain
+   * @returns
+   */
+  async getPrunedBlockchain() {
+    const data = await axios.get(`${api}/prunedBlocks`);
+
+    return data?.data;
+  }
+  /**
    * Get blockchain stats
    * @returns
    */

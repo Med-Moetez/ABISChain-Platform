@@ -22,6 +22,7 @@ export default async function Header() {
             <ActiveLink name="Products" path="/products" />
             <ActiveLink name="Block Explorer" path="/blockExplorer" />
             <ActiveLink name="Blockchain" path="/blockchain" />
+            <ActiveLink name="Pruned Blockchain" path="/prunedBlockchain" />
 
             <UserButton afterSignOutUrl="/" />
           </div>
