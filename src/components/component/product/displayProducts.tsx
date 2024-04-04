@@ -40,8 +40,8 @@ export function DisplayProducts(props: any) {
                 <TableCell>{item?.id}</TableCell>
                 <TableCell>
                   <Avatar>
-                    <AvatarImage src={item?.user?.imageUrl} />
-                    <AvatarFallback>{item?.user?.fullName}</AvatarFallback>
+                    <AvatarImage src={item?.userImageUrl} />
+                    <AvatarFallback>{item?.userFullName}</AvatarFallback>
                   </Avatar>
                 </TableCell>
 

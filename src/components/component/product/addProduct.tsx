@@ -55,7 +55,11 @@ export default function AddProduct() {
     addMutate({
       id: await uuidv4(),
       ...values,
-      user: user,
+      userId: user?.id,
+      userFirstName: user?.firstName,
+      userLastName: user?.lastName,
+      userFullName: user?.fullName,
+      userImageUrl: user?.imageUrl,
     });
     form.reset();
   };
