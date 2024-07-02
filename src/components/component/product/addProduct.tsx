@@ -29,6 +29,8 @@ import {
 import { useCreateProduct } from "@/hooks/productHooks";
 import { v4 as uuidv4 } from "uuid";
 import { useUser } from "@clerk/nextjs";
+import iotData from "../../../RT_IOT2022_TINY.json";
+import iotLargeData from "../../../RT_IOT2022.json";
 
 const formSchema = z.object({
   name: z.string().min(3),
@@ -50,23 +52,38 @@ export default function AddProduct() {
   });
 
   const { mutate: addMutate, isLoading, isError } = useCreateProduct();
+  function getRandomElementsFromArray(array: any, numElements: any) {
+    const shuffled = array.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, numElements);
+  }
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    const randomElements = await getRandomElementsFromArray(iotLargeData, 1000);
 
-  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    addMutate({
-      id: await uuidv4(),
-      ...values,
-      userId: user?.id,
-      userFirstName: user?.firstName,
-      userLastName: user?.lastName,
-      userFullName: user?.fullName,
-      userImageUrl: user?.imageUrl,
-    });
-    form.reset();
+    const transactions = await Promise.all(
+      randomElements.map(async (item: any) => {
+        const transactionId = await uuidv4();
+        return {
+          id: transactionId,
+          data: item,
+          user: {
+            userId: user?.id,
+            userFirstName: user?.firstName,
+            userLastName: user?.lastName,
+            userFullName: user?.fullName,
+            userImageUrl: user?.imageUrl,
+          },
+        };
+      })
+    );
+    addMutate(transactions);
+
+    // form.reset();
   };
 
   return (
     <Card>
-      <CardHeader>
+      {/* <CardHeader>
         <CardTitle>Add Product</CardTitle>
         <CardDescription>Enter product details</CardDescription>
       </CardHeader>
@@ -173,6 +190,19 @@ export default function AddProduct() {
             </div>
             <Button type="submit" className="mt-4 w-1/3 self-center">
               Submit
+            </Button>
+          </form>
+        </Form>
+      </CardContent> */}
+
+      <CardHeader>
+        <CardTitle>Generate Data</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={(e) => handleSubmit(e)} className="flex flex-col">
+            <Button type="submit" className="mt-4 w-1/3 self-center">
+              Generate
             </Button>
           </form>
         </Form>

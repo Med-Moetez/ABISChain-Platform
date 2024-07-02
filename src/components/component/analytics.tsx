@@ -21,6 +21,9 @@ import { ResponsiveLine } from "@nivo/line";
 import { ResponsivePie } from "@nivo/pie";
 import { ResponsiveWaffle } from "@nivo/waffle";
 import { useBlockchainStats } from "@/hooks/blockchainHooks";
+import { Line, Bar, Doughnut } from "react-chartjs-2";
+import "chart.js/auto";
+import { format } from "date-fns";
 
 export function Analytics() {
   const { data: blockchainStats } = useBlockchainStats();
@@ -42,6 +45,50 @@ export function Analytics() {
 
   const minedtransactionscount = blockchainStats?.blockchainTransactionsCount;
   const pendingtransactionscount = blockchainStats?.pendingTransactionsCount;
+
+  const memoryData = {
+    labels: ["Total", "Free"],
+    datasets: [
+      {
+        label: "Memory (GB)",
+        data: [
+          (blockchainStats?.memory?.total / 1e9).toFixed(2),
+          (blockchainStats?.memory?.free / 1e9).toFixed(2),
+        ],
+        backgroundColor: ["#36A2EB", "#FF6384"],
+      },
+    ],
+  };
+
+  const cpuData = {
+    labels: ["Cores"],
+    datasets: [
+      {
+        label: "CPU Cores",
+        data: [blockchainStats?.cpu.cores],
+        backgroundColor: ["#FFCE56"],
+      },
+    ],
+  };
+
+  const diskData = {
+    labels: blockchainStats?.disk.map((disk: any) => disk.device),
+    datasets: [
+      {
+        label: "Disk Size (GB)",
+        data: blockchainStats?.disk.map((disk: any) =>
+          (disk.size / 1e9).toFixed(2)
+        ),
+        backgroundColor: "#4BC0C0",
+      },
+    ],
+  };
+  const lastTimePruned = new Date(blockchainStats?.lastTimePruned);
+
+  const formatlastTimePruned =
+    blockchainStats?.lastTimePruned &&
+    format(lastTimePruned, "yyyy-MM-dd HH:mm:ss");
+
   return (
     <div className="flex flex-col min-h-screen">
       <main className="grid min-h-[calc(100vh_-_theme(spacing.14))] gap-4 p-4 md:gap-8 md:p-6">
@@ -60,7 +107,7 @@ export function Analytics() {
           <Card>
             <CardHeader>
               <CardDescription>Transactions</CardDescription>
-              <CardTitle>Mined / pending transactions</CardTitle>
+              <CardTitle>Mined / Pending transactions</CardTitle>
             </CardHeader>
             <CardContent>
               <MyResponsiveWaffle
@@ -105,22 +152,24 @@ export function Analytics() {
               <LabelledpieChart datatype={datatype} className="aspect-[4/3]" />
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardDescription>Pruning Info</CardDescription>
-              <CardTitle>Last Block details</CardTitle>
+          <Card className="overflow-hidden">
+            <CardHeader className="overflow-hidden">
+              <CardDescription className="truncate">
+                Pruning Info
+              </CardDescription>
+              <CardTitle className="truncate">Last Block Details</CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-4">
-              <div className="flex items-center">
-                <div>Pruner</div>
-                <div className="font-semibold ml-auto">
+            <CardContent className="grid gap-4 overflow-hidden">
+              <div>
+                <div className="truncate">Pruner</div>
+                <div className="font-semibold ml-auto truncate">
                   {blockchainStats?.prunerId || "Not yet"}
                 </div>
               </div>
-              <div className="flex items-center">
-                <div>lastTime Pruned</div>
-                <div className="font-semibold ml-auto">
-                  {blockchainStats?.lastTimePruned || "Not yet"}
+              <div>
+                <div className="truncate">Last Time Pruned</div>
+                <div className="font-semibold ml-auto truncate">
+                  {formatlastTimePruned || "Not yet"}
                 </div>
               </div>
             </CardContent>
@@ -490,11 +539,11 @@ function LabelledpiNodeseChart(props: any) {
       <ResponsivePie
         data={[
           {
-            id: "FullNode",
+            id: "Full\nNode",
             value: typesstats?.fullNodeCount,
           },
           {
-            id: "LightNode",
+            id: "Light\nNode",
             value: typesstats?.lightNodeCount,
           },
         ]}

@@ -28,27 +28,41 @@ export function DisplayProducts(props: any) {
             <TableRow>
               <TableHead>ID</TableHead>
               <TableHead>User</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Quantity</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>Data</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {props.products?.map((item: any) => (
-              <TableRow key={item?.id}>
-                <TableCell>{item?.id}</TableCell>
+              <TableRow key={item?.no}>
+                <TableCell>{item?.no}</TableCell>
                 <TableCell>
                   <Avatar>
-                    <AvatarImage src={item?.userImageUrl} />
-                    <AvatarFallback>{item?.userFullName}</AvatarFallback>
+                    <AvatarImage src={item?.user?.userImageUrl} />
+                    <AvatarFallback>{item?.user?.userFullName}</AvatarFallback>
                   </Avatar>
                 </TableCell>
+                <TableCell>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Proto</TableHead>
+                        <TableHead>Attack_type</TableHead>
+                        <TableHead>service</TableHead>
+                        <TableHead>flow_duration</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow key={item?.data?.flow_duration}>
+                        <TableCell>{item?.data?.flow_duration}</TableCell>
 
-                <TableCell>{item?.name}</TableCell>
-                <TableCell>{item?.quantity}</TableCell>
-                <TableCell>${item?.price}</TableCell>
-                <TableCell>{item?.status}</TableCell>
+                        <TableCell>{item?.data?.proto}</TableCell>
+                        <TableCell>{item?.data?.Attack_type}</TableCell>
+                        <TableCell>{item?.data?.service}</TableCell>
+                        <TableCell>{item?.data?.flow_duration}</TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
